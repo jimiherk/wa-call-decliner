@@ -1,18 +1,21 @@
-const { Client, LocalAuth } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal');
-const fs = require('fs');
+// Module imports
+import { Client, LocalAuth } from 'whatsapp-web.js';
+import qrcode from 'qrcode-terminal';
+import fs from 'fs';
 
+// Check if config and log text files exist, if not, create them
 if (!fs.existsSync('logs.txt')) {
     fs.writeFileSync('logs.txt', '');
 }
-
 if (!fs.existsSync('allow.txt')) {
     fs.writeFileSync('allow.txt', '');
 }
 
+// Read the allowed numbers from the allow.txt file
 let allowed = fs.readFileSync('allow.txt', 'utf-8')
     .split('\n');
 
+// Create WhatsApp client
 const client = new Client({
     puppeteer: {
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
@@ -20,19 +23,16 @@ const client = new Client({
     authStrategy: new LocalAuth(),
 });
 
+// Client event listeners
 client.on('ready', () => {
     console.log('Client is ready!');
 });
-
 client.on('remote_session_saved', () => {
     console.log('The session has been saved!');
 });
-
 client.on('message_revoke_everyone', (message, revoked_msg) => {
     fs.appendFileSync('logs.txt', `[${new Date()}]: ${message.from} revoked a message: ${revoked_msg.body}\n`);
 });
-
-
 client.on('call', async call => {
     if (!allowed.includes(call.from)) {
         await call.reject();
@@ -41,9 +41,9 @@ client.on('call', async call => {
         fs.appendFileSync('logs.txt', `[${new Date()}]: Automated message sent to ${call.from}\n`);
     }
 });
-
 client.on('qr', qr => {
     qrcode.generate(qr, { small: true });
 });
 
+// Start the client
 client.initialize();
