@@ -1,14 +1,14 @@
 {
   "name": "wa-call-decliner",
   "version": "1.0.0",
-  "description": "",
+  "description": "A collection of WhatsApp automations",
   "main": "index.js",
   "scripts": {
     "start": "node ."
   },
   "type": "module",
   "keywords": [],
-  "author": "",
+  "author": "Jimi",
   "license": "ISC",
   "dependencies": {
     "qrcode-terminal": "^0.12.0",
