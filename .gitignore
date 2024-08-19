@@ -1,0 +1,4 @@
+.wwebjs_*
+node_modules
+*.txt
+package-lock.json
