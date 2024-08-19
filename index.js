@@ -28,13 +28,17 @@ client.on('remote_session_saved', () => {
     console.log('The session has been saved!');
 });
 
+client.on('message_revoke_everyone', (message, revoked_msg) => {
+    fs.appendFileSync('logs.txt', `[${new Date()}]: ${message.from} revoked a message: ${revoked_msg.body}\n`);
+});
+
 
 client.on('call', async call => {
     if (!allowed.includes(call.from)) {
         await call.reject();
-        fs.appendFileSync('logs.txt', `Call from ${call.from} has been rejected\n`);
+        fs.appendFileSync('logs.txt', `[${new Date()}]: Call from ${call.from} has been rejected\n`);
         await client.sendMessage(call.from, `I do not take calls on WhatsApp. Please call me on FaceTime or send me a message. Thanks! (This is an automated message)`);
-        fs.appendFileSync('logs.txt', `Automated message sent to ${call.from}\n`);
+        fs.appendFileSync('logs.txt', `[${new Date()}]: Automated message sent to ${call.from}\n`);
     }
 });
 
