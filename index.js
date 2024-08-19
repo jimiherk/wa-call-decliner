@@ -1,6 +1,14 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 const fs = require('fs');
+const express = require('express');
+
+const app = express();
+
+let settings = {
+    callRejection: true,
+    messageSniping: true,
+};
 
 if (!fs.existsSync('logs.txt')) {
     fs.writeFileSync('logs.txt', '');
@@ -46,4 +54,19 @@ client.on('qr', qr => {
     qrcode.generate(qr, { small: true });
 });
 
+app.get('/toggle/:setting', (req, res) => {
+    let setting = req.params.setting;
+    if (settings[setting] === undefined) {
+        res.send('Invalid setting');
+    } else {
+        settings[setting] = !settings[setting];
+        res.send(`Setting ${setting} has been toggled!`);
+        fs.appendFileSync('logs.txt', `[${new Date()}]: Setting ${setting} has been toggled\n`);
+
+    }
+});
+
 client.initialize();
+app.listen(8989,() => {
+    console.log('Server is running on port 8989');
+});
